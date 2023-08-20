@@ -5,7 +5,6 @@ import { useNavigation } from "@react-navigation/native";
 
 function ProductCartView({ item }) {
     const navigation = useNavigation()
-    console.log(item);
 
     return (
         <Pressable onPress={() => navigation.navigate('ProductDetail', { id: item._id })}>
@@ -17,7 +16,7 @@ function ProductCartView({ item }) {
                     />
                 </View>
                 <View style={styles.detail}>
-                    <Text style={styles.title} numberOfLines={1}>{item.description}</Text>
+                    <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
                     <Text style={styles.price} numberOfLines={1}>${item.price}</Text>
                 </View>
                 {/* <IconButton name='heart' size={28} color={haveFavoriteId ? COLORS.pink : "gray"} style={styles.heartBtn} /> */}
@@ -27,8 +26,8 @@ function ProductCartView({ item }) {
 }
 const styles = StyleSheet.create({
     container: {
-        width: 180,
-        height: 250,
+        width: 170,
+        height: 240,
         borderRadius: SIZES.medium,
         shadowColor: '#171717',
         shadowOffset: { width: -2, height: 4 },

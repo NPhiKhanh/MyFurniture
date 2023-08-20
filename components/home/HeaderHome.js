@@ -2,21 +2,38 @@ import { TextInput, View, Text } from 'react-native';
 import IconButton from '../../components/UI/IconButton'
 import { COLORS, SIZES } from '../../constants/theme';
 import { StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { useState } from 'react';
+import { searchProduct } from '../../api/productApi';
 
 function HeaderHome({ iconL, iconR }) {
+    const navigation = useNavigation()
+    const [searchKey, setSearchKey] = useState('')
+    const [searchResult, setSearchResult] = useState([])
+
+    const searchButtonHandler = async () => {
+        try {
+            const result = await searchProduct(searchKey)
+            setSearchResult(result)
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     return (
         <View style={styles.headerContainer}>
             <View style={styles.inputContainer}>
                 <IconButton name={iconL} size={24} color="gray" />
                 <View style={styles.textInputContainer}>
                     <TextInput
-                        value=''
-                        onChangeText={() => { }}
+                        value={searchKey}
+                        onPressIn={() => navigation.navigate('Search')}
+                        onChangeText={setSearchKey}
                         placeholder='What are you looking for ?'
                         style={styles.textInput}
                     />
                 </View>
-                <IconButton name={iconR} size={24} color={COLORS.secondary} style={styles.camera} />
+                <IconButton name={iconR} size={24} color={COLORS.secondary} style={styles.camera} onPress={searchButtonHandler} />
             </View>
             <View style={styles.cartContainer}>
                 <View style={styles.cartCount}>

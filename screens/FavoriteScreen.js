@@ -6,7 +6,9 @@ import ProductCartView from "../components/product/ProductCartView";
 import { useSelector } from "react-redux";
 
 function FavoriteScreen(props) {
-    const favoriteList = useSelector(state => state.favorite.ids)
+    const furnitureList = useSelector(state => state.product.productList)
+    const favoriteIdList = useSelector(state => state.favorite.ids)
+    const newList = furnitureList.filter(product => favoriteIdList.includes(product._id))
 
     return (
         <SafeAreaView style={styles.wrapper}>
@@ -23,11 +25,12 @@ function FavoriteScreen(props) {
 
             <FlatList
                 style={styles.scrollView}
-                data={favoriteList}
+                data={newList}
                 keyExtractor={item => item.id}
                 renderItem={({ item }) => <ProductCartView item={item} />}
                 numColumns={2}
-                contentContainerStyle={{ columnGap: SIZES.medium }}
+                contentContainerStyle={{ rowGap: 16 }}
+                columnWrapperStyle={{ justifyContent: "space-between" }}
             />
         </SafeAreaView>
     );

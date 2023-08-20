@@ -1,7 +1,6 @@
 import { View, Text, Image, StyleSheet, ScrollView } from "react-native";
 import IconButton from "../components/UI/IconButton";
 import ButtonCustom from "../components/UI/ButtonCustom"
-import LoadingOverlay from "../components/UI/LoadingOverlay"
 import { COLORS, SIZES } from "../constants/theme";
 import { useDispatch, useSelector } from "react-redux";
 import { addFurniture, removeFurniture } from '../redux/favoriteSlice'

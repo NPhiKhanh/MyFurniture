@@ -2,10 +2,10 @@ import { StyleSheet, Text, View } from "react-native";
 import { COLORS, SIZES } from "../../constants/theme";
 import { useNavigation } from "@react-navigation/native";
 
-function Heading(props) {
+function Heading({ chooseCategory }) {
     const navigation = useNavigation()
     const navigateHandler = () => {
-        navigation.navigate("Product")
+        navigation.navigate("Product", { categoryName: chooseCategory })
     }
     return (
         <View style={styles.container}>

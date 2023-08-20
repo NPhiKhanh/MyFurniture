@@ -8,7 +8,7 @@ import CategoryList from "../components/home/CategoryList";
 import Heading from "../components/home/Heading";
 import ProductRow from "../components/product/ProductRow";
 import { useEffect, useState } from "react";
-import { getAllProductByCategory } from "../api/productApi";
+import { getAllProduct } from "../api/productApi";
 import { useDispatch } from "react-redux";
 import { setProduct } from '../redux/productSlice'
 
@@ -19,18 +19,16 @@ function HomeScreen(props) {
     const changeCategoryHanlder = (data) => {
         setChooseCategory(data)
     }
-
-    // useEffect(() => {
-    //     (async () => {
-    //         try {
-    //             const response = await getAllProductByCategory(chooseCategory)
-    //             console.log(response);
-    //             // dispatch(setProduct(response))
-    //         } catch (error) {
-    //             console.error(error.response.data);
-    //         }
-    //     })()
-    // }, [chooseCategory])
+    useEffect(() => {
+        (async () => {
+            try {
+                const response = await getAllProduct(chooseCategory)
+                dispatch(setProduct(response))
+            } catch (error) {
+                console.error(error.response.data);
+            }
+        })()
+    }, [chooseCategory])
 
     return (
         <SafeAreaView style={styles.container}>
@@ -39,8 +37,8 @@ function HomeScreen(props) {
                 <TitleHome />
                 <Carousel />
                 <CategoryList onChangeCategory={changeCategoryHanlder} chooseCategory={chooseCategory} />
-                <Heading />
-                <ProductRow />
+                <Heading chooseCategory={chooseCategory} />
+                <ProductRow chooseCategory={chooseCategory} />
             </ScrollView>
         </SafeAreaView>
     );

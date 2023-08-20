@@ -3,8 +3,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS, SIZES } from "../constants/theme";
 import IconButton from "../components/UI/IconButton";
 import ProductCartView from "../components/product/ProductCartView";
+import { useSelector } from "react-redux";
 
-function ProductbyCategoryScreen({ navigation }) {
+function ProductbyCategoryScreen({ navigation, route }) {
+    const data = useSelector(state => state.product.productList)
+    const { categoryName } = route.params
+
+    const newList = data.filter(product => product.category === categoryName)
     return (
         <SafeAreaView style={styles.wrapper}>
 
@@ -21,14 +26,15 @@ function ProductbyCategoryScreen({ navigation }) {
                 </View>
             </View>
 
-            {/* <FlatList
+            <FlatList
                 style={styles.scrollView}
-                data={favoriteList}
+                data={newList}
                 keyExtractor={item => item.id}
                 renderItem={({ item }) => <ProductCartView item={item} />}
                 numColumns={2}
-                contentContainerStyle={{ columnGap: SIZES.medium }}
-            /> */}
+                contentContainerStyle={{ rowGap: SIZES.medium }}
+                columnWrapperStyle={{ justifyContent: "space-between" }}
+            />
         </SafeAreaView>
     );
 }

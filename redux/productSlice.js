@@ -8,7 +8,8 @@ export const productSlice = createSlice({
     },
     reducers: {
         setProduct: (state, action) => {
-            state.productList = [...state.productList, ...action.payload]
+            // state.productList = [...state.productList, ...action.payload]
+            state.productList = action.payload
         },
         addToCart: (state, action) => {
             state.cartList.unshift(action.payload.carts)
