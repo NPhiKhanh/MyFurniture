@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addFurniture, removeFurniture } from '../redux/favoriteSlice'
 import { useLayoutEffect, useState } from "react";
 import { getProduct } from "../api/productApi";
+import { addToCart } from "../redux/productSlice";
 
 
 function ProductDetailScreen({ navigation, route }) {
@@ -101,7 +102,15 @@ function ProductDetailScreen({ navigation, route }) {
                 <Text style={styles.total}>Total:  ${amount * product.price}</Text>
             </View>
 
-            <ButtonCustom>Add to cart</ButtonCustom>
+            <ButtonCustom onPress={() => dispatch(addToCart({
+                _id: product._id,
+                quantity: amount,
+                imgUrl: product.imgUrl,
+                title: product.title,
+                price: product.price,
+            }))}>
+                Add to cart
+            </ButtonCustom>
 
         </ScrollView>
     );

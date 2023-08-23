@@ -2,8 +2,11 @@ import { StyleSheet, Text, View } from "react-native";
 import { SIZES } from "../constants/theme";
 import ButtonCustom from '../components/UI/ButtonCustom'
 import ProfileCard from "../components/profile/ProfileCard";
+import { useDispatch } from "react-redux";
+import { logOut } from "../redux/authSlice";
 
 function ProfileScreen(props) {
+    const dispatch = useDispatch()
     return (
         <View style={styles.container}>
             <View style={styles.imgWrapper}>
@@ -41,7 +44,7 @@ function ProfileScreen(props) {
                     />
                 </View>
             </View>
-            <ButtonCustom>Log out</ButtonCustom>
+            <ButtonCustom onPress={() => dispatch(logOut())}>Log out</ButtonCustom>
         </View>
     );
 }

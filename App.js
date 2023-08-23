@@ -7,6 +7,8 @@ import { useCallback, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import LoginScreen from './screens/LoginScreen'
+import SignupScreen from './screens/SignupScreen'
 import HomeScreeen from './screens/HomeScreen'
 import FavoriteScreen from './screens/FavoriteScreen'
 import SearchScreen from './screens/SearchScreen'
@@ -15,7 +17,9 @@ import ProfileScreen from './screens/ProfileScreen'
 import ProductDetailScreen from './screens/ProductDetailScreen';
 import ProductbyCategoryScreen from './screens/ProductbyCategoryScreen'
 import { store } from './redux/store'
-import { Provider } from 'react-redux'
+import { Provider, useDispatch, useSelector } from 'react-redux'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { authenticate } from './redux/authSlice';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -51,29 +55,44 @@ export default function App() {
 }
 
 function Root() {
-  // const dispatch = useDispatch()
+  const dispatch = useDispatch()
 
-  // useEffect(() => {
-  //   (async () => {
-  //     const token = await AsyncStorage.getItem('token')
-  //     if (token) {
-  //       dispatch(authenticate(token))
-  //     }
-  //   })()
-  // }, [])
+  useEffect(() => {
+    (async () => {
+      const token = await AsyncStorage.getItem('token')
+      if (token) {
+        dispatch(authenticate(token))
+      }
+    })()
+  }, [])
 
   return <Navigation />
 }
 
 function Navigation() {
-  // const authenticatedUser = useSelector(state => state.auth.isAuthenticated)
+  const authenticatedUser = useSelector(state => state.auth.isAuthenticated)
 
   return (
     <NavigationContainer>
-      {/* {!authenticatedUser && <AuthStack />}
-      {authenticatedUser && <AuthenticatedStack />} */}
-      <AuthenticatedStack />
+      {!authenticatedUser && <AuthStack />}
+      {authenticatedUser && <AuthenticatedStack />}
+
+      {/* <AuthStack />
+      <AuthenticatedStack /> */}
     </NavigationContainer>
+  );
+}
+
+function AuthStack() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="Signup" component={SignupScreen} />
+    </Stack.Navigator>
   );
 }
 

@@ -6,7 +6,7 @@ import { SIZES } from "../constants/theme";
 function SearchScreen(props) {
     return (
         <SafeAreaView style={styles.container}>
-            <HeaderHome iconL={"camera-outline"} iconR={"search-outline"} />
+            <HeaderHome iconL={"camera-outline"} iconR={"search-outline"} isSearchScreen />
         </SafeAreaView>
     );
 }

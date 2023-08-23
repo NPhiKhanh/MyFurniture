@@ -3,48 +3,65 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS, SIZES } from "../constants/theme";
 import IconButton from "../components/UI/IconButton";
 import CartView from '../components/cart/CartView'
+import { useSelector } from "react-redux";
+import ButtonCustom from "../components/UI/ButtonCustom";
+import { countCartItems, totalCartItems } from "../redux/selector";
+import { Image } from "react-native";
 
 function CartScreen(props) {
-    // const data = [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }]
-    const data = [{ id: 1 }, { id: 2 }, { id: 3 }]
+    const data = useSelector(state => state.product.cartList)
+    const selectedQuantity = useSelector(countCartItems)
+    const totalPrice = useSelector(totalCartItems)
+
+    let content = (
+        <View style={{ flex: 1, alignItems: "center" }}>
+            <Image style={styles.cartImg} source={require('../assets/imgs/cartShop.jpg')} />
+        </View>
+    )
+    if (data.length > 0) {
+        content = (
+            <>
+                <FlatList
+                    style={styles.scrollView}
+                    data={data}
+                    keyExtractor={item => item._id}
+                    renderItem={({ item }) => <CartView item={item} />}
+                    contentContainerStyle={{ columnGap: SIZES.medium }}
+                />
+
+                <View style={styles.amountAndPrice}>
+                    <Text style={styles.text}>{`Selected: ${selectedQuantity}`}</Text>
+                    <Text style={styles.text}>{`Total: $${totalPrice}`}</Text>
+                </View>
+                <View style={styles.checkoutContainer}>
+                    <ButtonCustom>Checkout</ButtonCustom>
+                </View>
+            </>
+        )
+    }
 
     return (
         <SafeAreaView style={styles.wrapper}>
 
             <View style={styles.container}>
                 <Text style={styles.popular}>Cart</Text>
-                <View style={styles.cartContainer}>
-                    <View style={styles.cartCount}>
-                        <Text style={styles.cartNumber}>7</Text>
-                    </View>
-                    <IconButton name="cart-outline" size={24} color="black" />
-                </View>
             </View>
 
-            <FlatList
-                style={styles.scrollView}
-                data={data}
-                keyExtractor={item => item.id}
-                renderItem={({ item }) => <CartView item={item} />}
-                contentContainerStyle={{ columnGap: SIZES.medium }}
-            />
+            {content}
         </SafeAreaView>
     );
 }
 const styles = StyleSheet.create({
     wrapper: {
-        marginHorizontal: SIZES.medium
+        marginHorizontal: SIZES.medium,
+        flex: 1,
     },
     scrollView: {
         marginTop: SIZES.sLarge,
-        marginBottom: SIZES.xlarge * 3,
-        // backgroundColor: 'red',
+        marginBottom: SIZES.large,
         height: 300
     },
     container: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
         marginTop: SIZES.medium,
     },
     popular: {
@@ -52,25 +69,23 @@ const styles = StyleSheet.create({
         fontSize: SIZES.xlarge,
         color: COLORS.primary
     },
-    cartContainer: {
-        alignItems: 'flex-end',
+    checkoutContainer: {
+        alignItems: "center"
     },
-    cartCount: {
-        position: 'absolute',
-        bottom: 16,
-        width: 16,
-        height: 16,
-        borderRadius: 8,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: COLORS.primary,
-        zIndex: 99
+    amountAndPrice: {
+        marginBottom: SIZES.medium,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center"
     },
-    cartNumber: {
-        fontSize: 10,
-        fontWeight: '600',
-        fontFamily: "regular",
-        color: COLORS.secondary,
+    text: {
+        fontFamily: 'bold',
+        fontSize: SIZES.medium,
+    },
+    cartImg: {
+        resizeMode: 'contain',
+        width: SIZES.width - 100,
+        height: SIZES.height - 100
     }
 })
 export default CartScreen;

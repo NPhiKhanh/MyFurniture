@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { FlatList, StyleSheet, Text, View, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS, SIZES } from "../constants/theme";
 import IconButton from "../components/UI/IconButton";
@@ -9,7 +9,24 @@ function FavoriteScreen(props) {
     const furnitureList = useSelector(state => state.product.productList)
     const favoriteIdList = useSelector(state => state.favorite.ids)
     const newList = furnitureList.filter(product => favoriteIdList.includes(product._id))
-
+    let content = (
+        <View style={{ flex: 1 }}>
+            <Image style={styles.favoriteImg} source={require('../assets/imgs/favorite.jpg')} />
+        </View>
+    )
+    if (newList.length > 0) {
+        content = (
+            <FlatList
+                style={styles.scrollView}
+                data={newList}
+                keyExtractor={item => item.id}
+                renderItem={({ item }) => <ProductCartView item={item} />}
+                numColumns={2}
+                contentContainerStyle={{ rowGap: 16 }}
+                columnWrapperStyle={{ justifyContent: "space-between" }}
+            />
+        )
+    }
     return (
         <SafeAreaView style={styles.wrapper}>
 
@@ -23,15 +40,7 @@ function FavoriteScreen(props) {
                 </View>
             </View>
 
-            <FlatList
-                style={styles.scrollView}
-                data={newList}
-                keyExtractor={item => item.id}
-                renderItem={({ item }) => <ProductCartView item={item} />}
-                numColumns={2}
-                contentContainerStyle={{ rowGap: 16 }}
-                columnWrapperStyle={{ justifyContent: "space-between" }}
-            />
+            {content}
         </SafeAreaView>
     );
 }
@@ -73,6 +82,11 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         fontFamily: "regular",
         color: COLORS.secondary,
+    },
+    favoriteImg: {
+        resizeMode: 'contain',
+        width: SIZES.width - 100,
+        height: SIZES.height - 300
     }
 })
 export default FavoriteScreen;

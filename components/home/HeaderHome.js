@@ -1,12 +1,13 @@
-import { TextInput, View, Text } from 'react-native';
+import { TextInput, View, Text, FlatList, Image } from 'react-native';
 import IconButton from '../../components/UI/IconButton'
 import { COLORS, SIZES } from '../../constants/theme';
 import { StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useState } from 'react';
 import { searchProduct } from '../../api/productApi';
+import ProductSearch from '../product/ProductSearch';
 
-function HeaderHome({ iconL, iconR }) {
+function HeaderHome({ iconL, iconR, isSearchScreen }) {
     const navigation = useNavigation()
     const [searchKey, setSearchKey] = useState('')
     const [searchResult, setSearchResult] = useState([])
@@ -21,27 +22,40 @@ function HeaderHome({ iconL, iconR }) {
     }
 
     return (
-        <View style={styles.headerContainer}>
-            <View style={styles.inputContainer}>
-                <IconButton name={iconL} size={24} color="gray" />
-                <View style={styles.textInputContainer}>
-                    <TextInput
-                        value={searchKey}
-                        onPressIn={() => navigation.navigate('Search')}
-                        onChangeText={setSearchKey}
-                        placeholder='What are you looking for ?'
-                        style={styles.textInput}
-                    />
+        <>
+            <View style={styles.headerContainer}>
+                <View style={styles.inputContainer}>
+                    <IconButton name={iconL} size={24} color="gray" />
+                    <View style={styles.textInputContainer}>
+                        <TextInput
+                            value={searchKey}
+                            onPressIn={() => navigation.navigate('Search')}
+                            onChangeText={setSearchKey}
+                            placeholder='What are you looking for ?'
+                            style={styles.textInput}
+                        />
+                    </View>
+                    <IconButton name={iconR} size={24} color={COLORS.secondary} style={styles.camera} onPress={searchKey ? searchButtonHandler : (() => setSearchResult([]))} />
                 </View>
-                <IconButton name={iconR} size={24} color={COLORS.secondary} style={styles.camera} onPress={searchButtonHandler} />
-            </View>
-            <View style={styles.cartContainer}>
-                <View style={styles.cartCount}>
-                    <Text style={styles.cartNumber}>7</Text>
+                <View style={styles.cartContainer}>
+                    <View style={styles.cartCount}>
+                        <Text style={styles.cartNumber}>7</Text>
+                    </View>
+                    <IconButton name="cart-outline" size={24} color="black" />
                 </View>
-                <IconButton name="cart-outline" size={24} color="black" />
             </View>
-        </View>
+            {searchResult.length === 0 && isSearchScreen ? (
+                <View style={{ flex: 1 }}>
+                    <Image style={styles.searchImg} source={require('../../assets/imgs/Pose23.png')} />
+                </View>
+            ) : (
+                <FlatList
+                    data={searchResult}
+                    keyExtractor={item => item._id}
+                    renderItem={({ item }) => <ProductSearch item={item} />}
+                />
+            )}
+        </>
 
     );
 }
@@ -100,6 +114,11 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         fontFamily: "regular",
         color: COLORS.secondary,
+    },
+    searchImg: {
+        resizeMode: 'contain',
+        width: SIZES.width - 100,
+        height: SIZES.height - 300
     }
 })
 

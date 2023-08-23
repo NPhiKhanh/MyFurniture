@@ -2,10 +2,10 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { COLORS, SIZES } from '../../constants/theme';
 
 
-function ButtonCustom({ children, onPress }) {
+function ButtonCustom({ children, onPress, style }) {
     return (
         <Pressable
-            style={({ pressed }) => [styles.button, pressed && styles.pressed]}
+            style={({ pressed }) => [styles.button, pressed && styles.pressed, style]}
             onPress={onPress}
         >
             <Text style={styles.buttonText}>{children}</Text>
@@ -23,7 +23,6 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.primary,
         paddingVertical: SIZES.medium,
         paddingHorizontal: 12,
-        backgroundColor: COLORS.primary,
         elevation: 2,
         shadowColor: 'black',
         shadowOffset: { width: 1, height: 1 },

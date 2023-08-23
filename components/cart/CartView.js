@@ -1,49 +1,56 @@
 import React, { useState } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Animated, Image } from 'react-native';
 import IconButton from '../UI/IconButton';
 import { StyleSheet } from 'react-native';
-import { SIZES, COLORS } from '../../constants/theme';
-import { Image } from 'react-native';
+import { SIZES } from '../../constants/theme';
+import { addCheckedItem, decreaseQuantity, increaseQuantity, removeCheckedItem } from '../../redux/productSlice';
+import { useDispatch } from 'react-redux';
+// import Swipeable from 'react-native-gesture-handler/Swipeable';
 
 function CartView({ item }) {
-    const [amount, setAmount] = useState(1)
-    const [toggleChoose, setToggleChoose] = useState(true)
+    const dispatch = useDispatch()
+    const [isChecked, setIsChecked] = useState(false)
 
     const chooseHanlder = () => {
-        setToggleChoose(pre => !pre)
-    }
-
-    const increaseAmountHandler = () => {
-        setAmount(pre => pre + 1)
-    }
-    const decreaseAmountHandler = () => {
-        if (amount > 1) {
-            setAmount(pre => pre - 1)
+        setIsChecked(pre => !pre)
+        if (!isChecked) {
+            dispatch(addCheckedItem(item))
+        } else {
+            dispatch(removeCheckedItem(item))
         }
     }
+
+    // const renderDeleteButton = () => {
+    //     return (
+    //         <IconButton name="trash-outline" color="white" size={24} style={styles.deleteButton} />
+    //     )
+    // }
+
     return (
+        // <Swipeable renderRightActions={renderDeleteButton}>
         <View style={styles.cartContainer}>
-            <IconButton style={styles.ellipse} name={toggleChoose ? 'ellipse-outline' : 'checkmark-circle-outline'} size={24} onPress={chooseHanlder} />
+            <IconButton style={styles.ellipse} name={isChecked ? 'checkmark-circle-outline' : 'ellipse-outline'} size={24} onPress={chooseHanlder} />
             <View style={styles.cartWrapper}>
                 <View style={styles.cartInfor}>
-                    <View style={styles.cartImgWrapper}>
+                    <View>
                         <Image
                             style={styles.cartImg}
-                            source={{ uri: 'https://img.freepik.com/free-photo/furniture-modern-studio-lifestyle-green_1122-1837.jpg?size=626&ext=jpg&uid=R113150246&ga=GA1.2.315536190.1692034312&semt=sph' }}
+                            source={{ uri: item.imgUrl }}
                         />
                     </View>
                     <View style={styles.cartText}>
-                        <Text style={styles.cartTitle} numberOfLines={2}>B2 lounge chair</Text>
-                        <Text style={styles.cartPrice}>$165</Text>
+                        <Text style={styles.cartTitle} numberOfLines={2}>{item.title}</Text>
+                        <Text style={styles.cartPrice}>${item.price}</Text>
                     </View>
                 </View>
                 <View style={styles.amount}>
-                    <IconButton name="remove" size={20} onPress={decreaseAmountHandler} />
-                    <Text style={styles.amountText}>{amount}</Text>
-                    <IconButton name="add" size={20} onPress={increaseAmountHandler} />
+                    <IconButton name="remove" size={20} onPress={() => dispatch(decreaseQuantity(item))} />
+                    <Text style={styles.amountText}>{item.quantity}</Text>
+                    <IconButton name="add" size={20} onPress={() => dispatch(increaseQuantity(item))} />
                 </View>
             </View>
         </View>
+        // </Swipeable>
     );
 }
 const styles = StyleSheet.create({
@@ -53,6 +60,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         height: 90,
         marginBottom: SIZES.medium,
+        // backgroundColor: "green"
     },
     ellipseWrraper: {
         alignItems: 'center'
@@ -73,14 +81,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginRight: 30
     },
-    cartImgWrapper: {
-
-    },
     cartImg: {
         height: '100%',
         width: 80,
         aspectRatio: 1,
-        resizeMode: 'cover'
+        resizeMode: 'cover',
+        borderRadius: SIZES.small
     },
     cartText: {
         marginLeft: SIZES.small
@@ -108,5 +114,10 @@ const styles = StyleSheet.create({
         fontSize: SIZES.medium,
         marginHorizontal: SIZES.xSmall
     },
+    deleteButton: {
+        width: 60,
+        height: 90,
+        backgroundColor: 'red'
+    }
 })
 export default CartView;
