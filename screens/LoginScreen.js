@@ -11,10 +11,10 @@ function LoginScreen() {
     const [isAuthenticated, setIsAuthenticated] = useState(false)
     const dispatch = useDispatch()
 
-    const logInHandler = async (email, password) => {
+    const logInHandler = async (username, password) => {
         setIsAuthenticated(true)
         try {
-            const token = await login(email, password)
+            const token = await login(username, password)
             dispatch(authenticate(token))
         } catch (error) {
             Alert.alert("Login failed", error.response.data.error.message)
@@ -36,7 +36,7 @@ function LoginScreen() {
 const styles = StyleSheet.create({
     img: {
         width: 400,
-        height: 810
+        height: 850
     }
 })
 export default LoginScreen;

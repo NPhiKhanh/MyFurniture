@@ -3,20 +3,19 @@ import { COLORS } from '../../constants/theme';
 
 function Input({
     label,
-    keyboardType,
+    onBlur,
     secure,
     onUpdateValue,
     value,
-    isInvalid,
 }) {
     return (
         <View style={styles.inputContainer}>
-            <Text style={[styles.label, isInvalid && styles.labelInvalid]}>
+            <Text style={styles.label}>
                 {label}
             </Text>
             <TextInput
-                style={[styles.input, isInvalid && styles.inputInvalid]}
-                keyboardType={keyboardType}
+                onBlur={onBlur}
+                style={styles.input}
                 secureTextEntry={secure}
                 onChangeText={onUpdateValue}
                 value={value}
@@ -36,9 +35,6 @@ const styles = StyleSheet.create({
         color: COLORS.secondary,
         marginBottom: 4,
     },
-    labelInvalid: {
-        color: 'red',
-    },
     input: {
         paddingVertical: 8,
         paddingHorizontal: 6,
@@ -47,8 +43,5 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.primary,
         borderRadius: 4,
         fontSize: 16,
-    },
-    inputInvalid: {
-        backgroundColor: "red",
     },
 });

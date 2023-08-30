@@ -1,19 +1,10 @@
-import { useState } from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
-
+import { StyleSheet, View } from 'react-native';
 import FlatButton from '../UI/FlatButton';
 import AuthForm from './AuthForm';
 import { useNavigation } from '@react-navigation/native';
-import { COLORS } from '../../constants/theme';
 
 function AuthContent({ isLogin, onAuthenticate }) {
     const navigation = useNavigation()
-
-    const [credentialsInvalid, setCredentialsInvalid] = useState({
-        email: false,
-        password: false,
-        confirmPassword: false,
-    });
 
     function switchAuthModeHandler() {
         if (isLogin) {
@@ -24,25 +15,8 @@ function AuthContent({ isLogin, onAuthenticate }) {
     }
 
     function submitHandler(credentials) {
-        let { email, password, confirmPassword } = credentials;
-
-        email = email.trim();
-        password = password.trim();
-
-        const emailIsValid = email.includes('@');
-        const passwordIsValid = password.length > 6;
-        const passwordsAreEqual = password === confirmPassword;
-
-        if (!emailIsValid || !passwordIsValid || (!isLogin && !passwordsAreEqual)) {
-            Alert.alert('Invalid input', 'Please check your entered credentials.');
-            setCredentialsInvalid({
-                email: !emailIsValid,
-                password: !passwordIsValid,
-                confirmPassword: !passwordIsValid || !passwordsAreEqual,
-            });
-            return;
-        }
-        onAuthenticate(email, password);
+        let { username, password } = credentials;
+        onAuthenticate(username, password);
     }
 
     return (
@@ -50,7 +24,6 @@ function AuthContent({ isLogin, onAuthenticate }) {
             <AuthForm
                 isLogin={isLogin}
                 onSubmit={submitHandler}
-                credentialsInvalid={credentialsInvalid}
             />
             <View style={styles.buttons}>
                 <FlatButton onPress={switchAuthModeHandler}>
@@ -66,7 +39,7 @@ export default AuthContent;
 const styles = StyleSheet.create({
     authContent: {
         position: 'absolute',
-        top: 50,
+        top: 100,
         left: 0,
         right: 0,
         marginTop: 64,

@@ -76,9 +76,7 @@ function Navigation() {
     <NavigationContainer>
       {!authenticatedUser && <AuthStack />}
       {authenticatedUser && <AuthenticatedStack />}
-
-      {/* <AuthStack />
-      <AuthenticatedStack /> */}
+      {/* <AuthStack /> */}
     </NavigationContainer>
   );
 }

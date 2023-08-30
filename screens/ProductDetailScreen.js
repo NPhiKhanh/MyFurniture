@@ -14,6 +14,8 @@ function ProductDetailScreen({ navigation, route }) {
     const [product, setProduct] = useState({})
     const [amount, setAmount] = useState(1)
 
+    const cartNumber = useSelector(state => state.product.cartList).length
+
     const increaseAmountHandler = () => {
         setAmount(pre => pre + 1)
     }
@@ -30,6 +32,7 @@ function ProductDetailScreen({ navigation, route }) {
                 setProduct(response)
             } catch (error) {
                 console.error(error);
+                // navigation.navigate('Login')
             }
         })()
     }, [])
@@ -59,7 +62,15 @@ function ProductDetailScreen({ navigation, route }) {
 
             <View style={styles.upperRow}>
                 <IconButton name='arrow-back-circle' color={COLORS.primary} size={30} onPress={() => navigation.goBack()} />
-                <IconButton name='heart' color={haveFavoriteId ? COLORS.pink : "gray"} size={30} onPress={favoriteButtonHandler} />
+                <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
+                    <View style={styles.cartContainer}>
+                        {cartNumber > 0 && <View style={styles.cartCount}>
+                            <Text style={styles.cartNumber}>{cartNumber}</Text>
+                        </View>}
+                        <IconButton name="cart-outline" size={30} color="black" onPress={() => navigation.navigate('Cart')} />
+                    </View>
+                    <IconButton name='heart' color={haveFavoriteId ? COLORS.pink : "gray"} size={30} onPress={favoriteButtonHandler} />
+                </View>
             </View>
 
             <Image
@@ -129,6 +140,27 @@ const styles = StyleSheet.create({
         position: "absolute",
         top: SIZES.sLarge,
         zIndex: 99,
+    },
+    cartContainer: {
+        alignItems: 'flex-end',
+        marginRight: 10
+    },
+    cartCount: {
+        position: 'absolute',
+        bottom: 16,
+        width: 16,
+        height: 16,
+        borderRadius: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: COLORS.primary,
+        zIndex: 99
+    },
+    cartNumber: {
+        fontSize: 10,
+        fontWeight: '600',
+        fontFamily: "regular",
+        color: COLORS.secondary,
     },
     img: {
         aspectRatio: 1,

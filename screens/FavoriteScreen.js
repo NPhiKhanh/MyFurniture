@@ -5,7 +5,8 @@ import IconButton from "../components/UI/IconButton";
 import ProductCartView from "../components/product/ProductCartView";
 import { useSelector } from "react-redux";
 
-function FavoriteScreen(props) {
+function FavoriteScreen({ navigation }) {
+    const cartNumber = useSelector(state => state.product.cartList).length
     const furnitureList = useSelector(state => state.product.productList)
     const favoriteIdList = useSelector(state => state.favorite.ids)
     const newList = furnitureList.filter(product => favoriteIdList.includes(product._id))
@@ -19,7 +20,7 @@ function FavoriteScreen(props) {
             <FlatList
                 style={styles.scrollView}
                 data={newList}
-                keyExtractor={item => item.id}
+                keyExtractor={item => item._id}
                 renderItem={({ item }) => <ProductCartView item={item} />}
                 numColumns={2}
                 contentContainerStyle={{ rowGap: 16 }}
@@ -33,10 +34,10 @@ function FavoriteScreen(props) {
             <View style={styles.container}>
                 <Text style={styles.popular}>Favorite Furniture</Text>
                 <View style={styles.cartContainer}>
-                    <View style={styles.cartCount}>
-                        <Text style={styles.cartNumber}>7</Text>
-                    </View>
-                    <IconButton name="cart-outline" size={24} color="black" />
+                    {cartNumber > 0 && (<View style={styles.cartCount}>
+                        <Text style={styles.cartNumber}>{cartNumber}</Text>
+                    </View>)}
+                    <IconButton name="cart-outline" size={24} color="black" onPress={() => navigation.navigate('Cart')} />
                 </View>
             </View>
 

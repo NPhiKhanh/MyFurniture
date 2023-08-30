@@ -1,16 +1,36 @@
-import { StyleSheet, Text, View } from "react-native";
-import { SIZES } from "../constants/theme";
+import { Image, StyleSheet, Text, View } from "react-native";
+import { COLORS, SIZES } from "../constants/theme";
 import ButtonCustom from '../components/UI/ButtonCustom'
 import ProfileCard from "../components/profile/ProfileCard";
 import { useDispatch } from "react-redux";
 import { logOut } from "../redux/authSlice";
+import * as ImagePicker from 'expo-image-picker';
+import IconButton from "../components/UI/IconButton";
+import { useState } from "react";
 
 function ProfileScreen(props) {
     const dispatch = useDispatch()
+    const [image, setImage] = useState(null);
+
+    const takeImg = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 0.5,
+        });
+        if (!result.canceled) {
+            setImage(result.assets[0].uri);
+        } return
+    }
+
     return (
         <View style={styles.container}>
-            <View style={styles.imgWrapper}>
-                <View style={styles.avatar}></View>
+            <View style={styles.imgWrapper} >
+                <View style={styles.avatar}>
+                    <Image source={{ uri: image }} style={styles.imgAvatar} />
+                    <IconButton name='camera' color="white" size={20} onPress={takeImg} style={styles.imgPick} />
+                </View>
             </View>
             <View style={styles.username}>
                 <Text style={styles.usernameText}>Phi Khanh</Text>
@@ -56,7 +76,7 @@ const styles = StyleSheet.create({
         height: 200,
         width: SIZES.width,
         backgroundColor: "#adb5bd",
-        alignItems: "center"
+        alignItems: "center",
     },
     avatar: {
         width: 140,
@@ -76,7 +96,7 @@ const styles = StyleSheet.create({
     },
     details: {
         marginTop: SIZES.medium,
-        marginBottom: SIZES.large,
+        marginBottom: SIZES.xlarge,
         marginHorizontal: SIZES.medium,
     },
     detailsWrapper: {
@@ -86,6 +106,19 @@ const styles = StyleSheet.create({
         fontFamily: "medium",
         fontSize: SIZES.medium,
         color: 'gray'
+    },
+    imgPick: {
+        padding: 6,
+        position: "absolute",
+        bottom: 0,
+        right: SIZES.small,
+        backgroundColor: '#4E4F50'
+    },
+    imgAvatar: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 70,
+        aspectRatio: 1,
     }
 })
 export default ProfileScreen;

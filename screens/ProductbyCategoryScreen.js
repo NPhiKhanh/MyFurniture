@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 
 function ProductbyCategoryScreen({ navigation, route }) {
     const data = useSelector(state => state.product.productList)
+    const cartNumber = useSelector(state => state.product.cartList).length
     const { categoryName } = route.params
 
     const newList = data.filter(product => product.category === categoryName)
@@ -19,9 +20,9 @@ function ProductbyCategoryScreen({ navigation, route }) {
                     <Text style={styles.popular}>All Products</Text>
                 </View>
                 <View style={styles.cartContainer}>
-                    <View style={styles.cartCount}>
-                        <Text style={styles.cartNumber}>7</Text>
-                    </View>
+                    {cartNumber > 0 && <View style={styles.cartCount}>
+                        <Text style={styles.cartNumber}>{cartNumber}</Text>
+                    </View>}
                     <IconButton name="cart-outline" size={24} color="black" />
                 </View>
             </View>
@@ -29,7 +30,7 @@ function ProductbyCategoryScreen({ navigation, route }) {
             <FlatList
                 style={styles.scrollView}
                 data={newList}
-                keyExtractor={item => item.id}
+                keyExtractor={item => item._id}
                 renderItem={({ item }) => <ProductCartView item={item} />}
                 numColumns={2}
                 contentContainerStyle={{ rowGap: SIZES.medium }}

@@ -12,7 +12,7 @@ import { getAllProduct } from "../api/productApi";
 import { useDispatch } from "react-redux";
 import { setProduct } from '../redux/productSlice'
 
-function HomeScreen(props) {
+function HomeScreen({ navigation }) {
     const [chooseCategory, setChooseCategory] = useState('chair')
     const dispatch = useDispatch()
 
@@ -22,13 +22,13 @@ function HomeScreen(props) {
     useEffect(() => {
         (async () => {
             try {
-                const response = await getAllProduct(chooseCategory)
+                const response = await getAllProduct()
                 dispatch(setProduct(response))
             } catch (error) {
-                console.error(error.response.data);
+                console.error(error.response);
             }
         })()
-    }, [chooseCategory])
+    }, [])
 
     return (
         <SafeAreaView style={styles.container}>

@@ -6,20 +6,21 @@ import LoadingOverlay from '../components/UI/LoadingOverlay'
 import { authenticate } from '../redux/authSlice';
 import { Image, StyleSheet, View } from 'react-native';
 
-function SignupScreen() {
+function SignupScreen({ navigation }) {
 
     const [isAuthenticated, setIsAuthenticated] = useState(false)
     const dispatch = useDispatch()
 
-    const signUpHandler = async (email, password) => {
+    const signUpHandler = async (username, password) => {
         setIsAuthenticated(true)
         try {
-            const token = await signUp(email, password)
-            dispatch(authenticate(token))
+            await signUp(username, password)
+            // dispatch(authenticate(token))
         } catch (error) {
             Alert.alert("Login failed", error.response.data.error.message)
         }
         setIsAuthenticated(false)
+        navigation.replace('Login')
     }
 
     if (isAuthenticated) {
@@ -36,7 +37,7 @@ function SignupScreen() {
 const styles = StyleSheet.create({
     img: {
         width: 400,
-        height: 300
+        height: 850
     }
 })
 

@@ -11,7 +11,7 @@ export const authSlice = createSlice({
         authenticate: (state, action) => {
             state.token = action.payload;
             AsyncStorage.setItem('token', action.payload)
-            state.isAuthenticated = !state.isAuthenticated
+            state.isAuthenticated = true
         },
         logOut: (state) => {
             state.token = ''

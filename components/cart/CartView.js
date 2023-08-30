@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, Animated, Image } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import IconButton from '../UI/IconButton';
 import { StyleSheet } from 'react-native';
-import { SIZES } from '../../constants/theme';
-import { addCheckedItem, decreaseQuantity, increaseQuantity, removeCheckedItem } from '../../redux/productSlice';
+import { COLORS, SIZES } from '../../constants/theme';
+import { addCheckedItem, decreaseQuantity, increaseQuantity, removeCheckedItem, removeFromCart } from '../../redux/productSlice';
 import { useDispatch } from 'react-redux';
-// import Swipeable from 'react-native-gesture-handler/Swipeable';
+import { GestureHandlerRootView, Swipeable } from 'react-native-gesture-handler';
 
 function CartView({ item }) {
     const dispatch = useDispatch()
@@ -20,37 +20,47 @@ function CartView({ item }) {
         }
     }
 
-    // const renderDeleteButton = () => {
-    //     return (
-    //         <IconButton name="trash-outline" color="white" size={24} style={styles.deleteButton} />
-    //     )
-    // }
+    const renderDeleteButton = () => {
+        return (
+            <IconButton
+                name="trash-outline"
+                color={COLORS.secondary} size={24}
+                style={styles.deleteButton}
+                onPress={() => {
+                    dispatch(removeFromCart(item))
+                    dispatch(removeCheckedItem(item))
+                }}
+            />
+        )
+    }
 
     return (
-        // <Swipeable renderRightActions={renderDeleteButton}>
-        <View style={styles.cartContainer}>
-            <IconButton style={styles.ellipse} name={isChecked ? 'checkmark-circle-outline' : 'ellipse-outline'} size={24} onPress={chooseHanlder} />
-            <View style={styles.cartWrapper}>
-                <View style={styles.cartInfor}>
-                    <View>
-                        <Image
-                            style={styles.cartImg}
-                            source={{ uri: item.imgUrl }}
-                        />
-                    </View>
-                    <View style={styles.cartText}>
-                        <Text style={styles.cartTitle} numberOfLines={2}>{item.title}</Text>
-                        <Text style={styles.cartPrice}>${item.price}</Text>
+        <GestureHandlerRootView>
+            <Swipeable renderRightActions={renderDeleteButton}>
+                <View style={styles.cartContainer}>
+                    <IconButton style={styles.ellipse} name={isChecked ? 'checkmark-circle-outline' : 'ellipse-outline'} size={24} onPress={chooseHanlder} />
+                    <View style={styles.cartWrapper}>
+                        <View style={styles.cartInfor}>
+                            <View>
+                                <Image
+                                    style={styles.cartImg}
+                                    source={{ uri: item.imgUrl }}
+                                />
+                            </View>
+                            <View style={styles.cartText}>
+                                <Text style={styles.cartTitle} numberOfLines={2}>{item.title}</Text>
+                                <Text style={styles.cartPrice}>${item.price}</Text>
+                            </View>
+                        </View>
+                        <View style={styles.amount}>
+                            <IconButton name="remove" size={20} onPress={() => dispatch(decreaseQuantity(item))} />
+                            <Text style={styles.amountText}>{item.quantity}</Text>
+                            <IconButton name="add" size={20} onPress={() => dispatch(increaseQuantity(item))} />
+                        </View>
                     </View>
                 </View>
-                <View style={styles.amount}>
-                    <IconButton name="remove" size={20} onPress={() => dispatch(decreaseQuantity(item))} />
-                    <Text style={styles.amountText}>{item.quantity}</Text>
-                    <IconButton name="add" size={20} onPress={() => dispatch(increaseQuantity(item))} />
-                </View>
-            </View>
-        </View>
-        // </Swipeable>
+            </Swipeable>
+        </GestureHandlerRootView>
     );
 }
 const styles = StyleSheet.create({
@@ -60,7 +70,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         height: 90,
         marginBottom: SIZES.medium,
-        // backgroundColor: "green"
     },
     ellipseWrraper: {
         alignItems: 'center'
@@ -117,7 +126,9 @@ const styles = StyleSheet.create({
     deleteButton: {
         width: 60,
         height: 90,
-        backgroundColor: 'red'
+        backgroundColor: COLORS.primary,
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 })
 export default CartView;

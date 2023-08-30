@@ -1,87 +1,115 @@
-import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-
+import { StyleSheet, View, Text } from 'react-native';
 import ButtonCustom from '../../components/UI/ButtonCustom'
 import Input from './Input';
 import { SIZES } from '../../constants/theme';
+import { useForm, Controller } from "react-hook-form"
+import { yupResolver } from "@hookform/resolvers/yup"
+import * as yup from "yup"
 
-function AuthForm({ isLogin, onSubmit, credentialsInvalid }) {
-    // const [enteredEmail, setEnteredEmail] = useState('');
-    // const [enteredPassword, setEnteredPassword] = useState('');
-    // const [enteredConfirmPassword, setEnteredConfirmPassword] = useState('');
+function AuthForm({ isLogin, onSubmit }) {
 
-    // const {
-    //     email: emailIsInvalid,
-    //     password: passwordIsInvalid,
-    //     confirmPassword: passwordsDontMatch,
-    // } = credentialsInvalid;
-
-    // function updateInputValueHandler(inputType, enteredValue) {
-    //     switch (inputType) {
-    //         case 'email':
-    //             setEnteredEmail(enteredValue);
-    //             break;
-    //         case 'password':
-    //             setEnteredPassword(enteredValue);
-    //             break;
-    //         case 'confirmPassword':
-    //             setEnteredConfirmPassword(enteredValue);
-    //             break;
-    //     }
-    // }
-
-    const {
-        email: emailIsInvalid,
-        password: passwordIsInvalid,
-        confirmPassword: passwordsDontMatch,
-    } = credentialsInvalid;
-
-    const [dataInput, setDataInput] = useState({
-        enteredEmail: '',
-        enteredPassword: '',
-        enteredConfirmPassword: ''
-    })
-
-    const onChangTextHandler = (inputIdentifier, inputValue) => {
-        setDataInput(state => ({ ...state, [inputIdentifier]: inputValue }))
+    let schema
+    if (!isLogin) {
+        schema = yup.object({
+            username: yup
+                .string()
+                .required('Please enter your username')
+                .min(6, 'Please enter at least 6 characters'),
+            password: yup
+                .string()
+                .required('Please enter your password')
+                .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{5,}$/, { message: "Please enter at least 5 characters, 1 upper case letter, 1 lower case letter, 1 numeric digit" }),
+            confirmPassword: yup
+                .string()
+                .required('Please retype your password')
+                .oneOf([yup.ref('password')], 'Password does not match '),
+        });
+    } else {
+        schema = yup.object({
+            username: yup
+                .string()
+                .required('Please enter your username')
+                .min(6, 'Please enter at least 6 characters'),
+            password: yup
+                .string()
+                .required('Please enter your password')
+                .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{5,}$/, { message: "Please enter the correct password" }),
+        });
     }
 
-    function submitHandler() {
+    const {
+        control,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({
+        defaultValues: {
+            username: "",
+            password: "",
+            confirmPassword: "",
+        },
+        resolver: yupResolver(schema)
+    })
+
+    function submitHandler(data) {
         onSubmit({
-            email: dataInput.enteredEmail,
-            password: dataInput.enteredPassword,
-            confirmPassword: dataInput.enteredConfirmPassword,
+            username: data.username,
+            password: data.password,
         });
     }
 
     return (
         <View style={styles.form}>
             <View>
-                <Input
-                    label="Email Address"
-                    onUpdateValue={(text) => onChangTextHandler('enteredEmail', text)}
-                    value={dataInput.enteredEmail}
-                    keyboardType="email-address"
-                    isInvalid={emailIsInvalid}
+                <Controller
+                    control={control}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                        <Input
+                            label="Username"
+                            onBlur={onBlur}
+                            onUpdateValue={onChange}
+                            value={value}
+                        />
+                    )}
+                    name="username"
                 />
-                <Input
-                    label="Password"
-                    onUpdateValue={(text) => onChangTextHandler('enteredPassword', text)}
-                    secure
-                    value={dataInput.enteredPassword}
-                    isInvalid={passwordIsInvalid}
+                {errors.username && <Text style={styles.err}>{errors.username.message}</Text>}
+
+                <Controller
+                    control={control}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                        <Input
+                            label="Password"
+                            onBlur={onBlur}
+                            onUpdateValue={onChange}
+                            value={value}
+                            secure
+                        />
+                    )}
+                    name="password"
                 />
+                {errors.password && <Text style={styles.err}>{errors.password.message}</Text>}
+
                 {!isLogin && (
-                    <Input
-                        label="Confirm Password"
-                        onUpdateValue={(text) => onChangTextHandler('enteredConfirmPassword', text)}
-                        secure
-                        value={dataInput.enteredConfirmPassword}
-                        isInvalid={passwordsDontMatch}
-                    />
+                    <>
+                        <Controller
+                            control={control}
+                            render={({ field: { onChange, onBlur, value } }) => (
+                                <Input
+                                    label="Confirm Password"
+                                    onBlur={onBlur}
+                                    onUpdateValue={onChange}
+                                    value={value}
+                                    secure
+                                />
+                            )}
+                            name="confirmPassword"
+                        />
+                        {errors.confirmPassword && <Text style={styles.err}>{errors.confirmPassword.message}</Text>}
+                    </>
+
                 )}
                 <View style={styles.buttons}>
-                    <ButtonCustom onPress={submitHandler} style={styles.buttonCustom}>
+                    <ButtonCustom onPress={handleSubmit(submitHandler)} style={styles.buttonCustom}>
                         {isLogin ? 'Log In' : 'Sign Up'}
                     </ButtonCustom>
                 </View>
@@ -99,5 +127,8 @@ const styles = StyleSheet.create({
     },
     buttonCustom: {
         width: SIZES.width - 100
+    },
+    err: {
+        color: 'red',
     }
 });

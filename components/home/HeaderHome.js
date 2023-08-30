@@ -6,11 +6,14 @@ import { useNavigation } from '@react-navigation/native';
 import { useState } from 'react';
 import { searchProduct } from '../../api/productApi';
 import ProductSearch from '../product/ProductSearch';
+import { useSelector } from 'react-redux';
 
 function HeaderHome({ iconL, iconR, isSearchScreen }) {
     const navigation = useNavigation()
     const [searchKey, setSearchKey] = useState('')
     const [searchResult, setSearchResult] = useState([])
+
+    const cartNumber = useSelector(state => state.product.cartList).length
 
     const searchButtonHandler = async () => {
         try {
@@ -38,10 +41,10 @@ function HeaderHome({ iconL, iconR, isSearchScreen }) {
                     <IconButton name={iconR} size={24} color={COLORS.secondary} style={styles.camera} onPress={searchKey ? searchButtonHandler : (() => setSearchResult([]))} />
                 </View>
                 <View style={styles.cartContainer}>
-                    <View style={styles.cartCount}>
-                        <Text style={styles.cartNumber}>7</Text>
-                    </View>
-                    <IconButton name="cart-outline" size={24} color="black" />
+                    {cartNumber > 0 && <View style={styles.cartCount}>
+                        <Text style={styles.cartNumber}>{cartNumber}</Text>
+                    </View>}
+                    <IconButton name="cart-outline" size={24} color="black" onPress={() => navigation.navigate('Cart')} />
                 </View>
             </View>
             {searchResult.length === 0 && isSearchScreen ? (
@@ -50,6 +53,7 @@ function HeaderHome({ iconL, iconR, isSearchScreen }) {
                 </View>
             ) : (
                 <FlatList
+                    style={styles.searchList}
                     data={searchResult}
                     keyExtractor={item => item._id}
                     renderItem={({ item }) => <ProductSearch item={item} />}
@@ -119,6 +123,9 @@ const styles = StyleSheet.create({
         resizeMode: 'contain',
         width: SIZES.width - 100,
         height: SIZES.height - 300
+    },
+    searchList: {
+        marginBottom: 50
     }
 })
 
